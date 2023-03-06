@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+  <!-- 页面meta -->
+  <meta charset="UTF-8">
+  <title>机票后台管理系统</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="../../plugins/elementui/index.css">
+  <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../css/style.css">
+
+</head>
+<body>
+<div id="app">
+
+  <el-container id="container">
+    <el-header style="background-color: #91a7d0; box-shadow: 0 5px 5px #888; z-index: 1">
+
+      <el-row type="flex" justify="space-between">
+        <el-col style="width: 180px;" :span="2">
+          <div class="grid-content bg-purple">
+            <p style="text-align: center;font-weight: bold; font-size: 18px">欢迎您: <span
+                style="font-family: 'Arial Black'" shiro:principal></span></p>
+          </div>
+        </el-col>
+
+        <el-col :span="2">
+          <div class="grid-content bg-purple-light">
+            <el-button style="display: flex; margin: 10px;" type="danger" @click="toLogout()">退出登录</el-button>
+          </div>
+        </el-col>
+
+      </el-row>
+    </el-header>
+    <el-container id="container">
+      <el-aside width="220px" style="background-color: #e5f1ff">
+        <el-menu :default-active="activeIndex" :default-openeds="['1', '3']" mode="vertical" @select="handleSelect"
+        >
+          <el-submenu index="1" style="background-color: #b6cfea ">
+            <template slot="title">
+              <i class="el-icon-edit"></i>
+              <span style="font-family: 'PingFang SC', system-ui; font-weight: bold; font-size: 18px">
+                测试管理系统
+              </span>
+            </template>
+            <el-menu-item index="1-1" style="box-shadow: 0px 10px 6px -10px;">
+              <i class="el-icon-rank"></i>
+              <span style="font-family: 'PingFang SC', system-ui; font-weight: bold; font-size: 16px">
+                系统首页
+              </span>
+            </el-menu-item>
+            <el-menu-item index="1-2" style="box-shadow: 0px 10px 6px -10px;">
+              <i class="el-icon-document"></i>
+              <span style="font-family: 'PingFang SC', system-ui; font-weight: bold; font-size: 16px">
+                用户管理
+              </span>
+            </el-menu-item>
+            <el-menu-item index="1-3" style="box-shadow: 0px 10px 6px -10px;">
+              <i class="el-icon-menu"></i>
+              <span style="font-family: 'PingFang SC', system-ui; font-weight: bold; font-size: 16px">
+                管理员管理</span>
+            </el-menu-item>
+            <el-menu-item index="1-4" style="box-shadow: 0px 10px 6px -10px;">
+              <i class="el-icon-setting"></i>
+              <span style="font-family: 'PingFang SC', system-ui; font-weight: bold; font-size: 16px">
+                飞机管理</span>
+            </el-menu-item>
+            <el-menu-item index="1-5" style="box-shadow: 0px 10px 6px -10px;">
+              <i class="el-icon-tickets"></i>
+              <span style="font-family: 'PingFang SC', system-ui; font-weight: bold; font-size: 16px">
+                航班管理</span>
+            </el-menu-item>
+            <el-menu-item index="1-6" style="box-shadow: 0px 10px 6px -10px;">
+              <i class="el-icon-tickets"></i>
+              <span style="font-family: 'PingFang SC', system-ui; font-weight: bold; font-size: 16px">
+                订单管理</span>
+            </el-menu-item>
+
+          </el-submenu>
+        </el-menu>
+      </el-aside>
+
+      <iframe style="height: 100%; width: 100%; border: 0" id="app_frame" :src="src"></iframe>
+
+    </el-container>
+  </el-container>
+</div>
+
+<style>
+    html, body, #app, #container {
+        height: 100%;
+    }
+</style>
+
+
+<script src="../../js/vue.js"></script>
+
+<script src="../../plugins/elementui/index.js"></script>
+
+<script type="text/javascript" src="../../js/jquery.min.js"></script>
+
+<script src="../../js/axios-0.18.0.js"></script>
+
+<script>
+  let vue = new Vue({
+    el: '#app',
+    data: {
+      src: "/pages/def.html",
+      activeIndex: "",
+      isCollapse: true,
+    },
+    //钩子函数，VUE对象初始化完成后自动执行
+    created() {
+    },
+
+    methods: {
+      //导航栏
+      handleSelect(key) {
+        // this.activeIndex = key;
+        let k = parseInt(key.slice(2))
+        this.src = "/pages/";
+        switch (k) {
+          default:
+            break;
+          case 1:
+            this.src += "def.html";
+            document.getElementById("app_frame").src = this.src;
+            break;
+          case 2:
+            this.src += "users.html";
+            document.getElementById("app_frame").src = this.src;
+            break;
+          case 3:
+            this.src += "admins.html";
+            document.getElementById("app_frame").src = this.src;
+            break;
+          case 4:
+            this.src += "aircrafts.html";
+            document.getElementById("app_frame").src = this.src;
+            break;
+          case 5:
+            this.src += "flights.html";
+            document.getElementById("app_frame").src = this.src;
+            break;
+          case 6:
+            this.src += "orders.html";
+            document.getElementById("app_frame").src = this.src;
+            break;
+        }
+      },
+
+      //退出
+      toLogout() {
+        location.replace("/logout");
+      }
+    }
+  })
+</script>
+</body>
+</html>

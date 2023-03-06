@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+  <title>机票预定</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+
+  <!-- Bootstrap -->
+  <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+
+  <!-- Custom stlylesheet -->
+  <link type="text/css" rel="stylesheet" href="css/index_style.css"/>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="plugins/elementui/index.css">
+  <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+<div id="app">
+  <div id="booking" class="section">
+    <div class="header">
+      <div class="top-bar">
+        <img class="logo" src="/images/logo_201810new.png" alt="logo">
+        <ul>
+          <li>
+            <img src="/images/top_1.png" id="cn_flag">
+            <span>官方网站</span>
+            <span id="separator">|</span>
+          </li>
+          <li>
+            <span>客服热线：95361</span>
+            <span id="separator">|</span>
+          </li>
+          <li shiro:notAuthenticated>
+            <a id="login_a" href="/toLogin">
+              <img src="https://www.shenzhenair.com/szair_B2C/static/ued/images/header/user.png">登录</a>
+            <span id="separator">|</span>
+          </li>
+          <li>
+            <a id="register_a" href="/toRegister">
+              <img src="https://www.shenzhenair.com/szair_B2C/static/ued/images/header/sign.png">注册</a>
+          </li>
+        </ul>
+      </div>
+
+      <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal"
+               @select="handleSelect" background-color="#fff">
+        <el-menu-item style="float: right" index="5" shiro:authenticated> 退出</el-menu-item>
+        <el-menu-item style="float: right" index="4"> 我的订单</el-menu-item>
+        <el-menu-item style="float: right" index="3"> 机票预定</el-menu-item>
+        <el-menu-item style="float: right" index="2"> 首页</el-menu-item>
+        <el-menu-item style="float: right" index="1"> 欢迎您 <span shiro:principal></span></el-menu-item>
+      </el-menu>
+    </div>
+    <div class="section-center">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="booking-cta">
+              <h1>飞了飞了飞了。</h1>
+              <p>　晋太元中，武陵人捕鱼为业。缘溪行，忘路之远近。忽逢桃花林，夹岸数百步，中无杂树，芳草鲜美，落英缤纷。渔人甚异之，复前行，欲穷其林。</p>
+            </div>
+          </div>
+          <div class="col-md-7 col-md-offset-1">
+            <div class="booking-form">
+              <form action="toSearch" method="post">
+                <div style="margin-bottom: 35px;">
+                  <img src="/images/ad.jpg" alt="">
+                </div>
+                <div class="form-btn">
+                  <button
+                      style="display: flex;
+                      font-size: 26px;
+                      font-style: italic;
+                      justify-content: center;
+                      align-items: center;"
+                      class="submit-btn">
+                    🛫说走就走嗷~🛫
+                  </button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="down_arrow">
+      <img id="down_a" src="/images/double-down.png" alt="">
+    </div>
+  </div>
+  <div id="info1">
+    <div id="info1_title">
+      —— 热门目的地 ——
+    </div>
+    <div id="info1_sub_title">
+      身体和灵魂总有一个在路上
+    </div>
+
+    <div id="mainPic">
+      <img src="/images/HUIZHOU.jpg" alt="huizhou">
+      <div id="text">
+        <span>惠州</span>
+      </div>
+    </div>
+    <ul>
+      <li>
+        <img src="/images/ZHUHAI.jpg">
+        <div class="text">
+          <span>珠海</span>
+          <br>
+        </div>
+      </li>
+      <li>
+        <img src="/images/RIBEN.jpg">
+        <div class="text">
+          <span>日本</span>
+          <br>
+        </div>
+      </li>
+      <li>
+        <img src="/images/WUXI.jpg">
+        <div class="text"><span>无锡</span>
+          <br>
+        </div>
+      </li>
+      <li>
+        <img src="/images/HAERBIN.jpg">
+        <div class="text"><span>哈尔滨</span>
+          <br>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="footer">
+    <div class="footer_bd">
+      <a href="http://www.staralliance.com/cn/" target="_blank">
+        <span class="star_logo"></span>
+      </a>
+      <div class="ft_in">
+        <p>
+          <a href="#" target="_blank">法律声明</a>
+          <span id="separator">|</span>
+          <a href="#" target="_blank">联系我们</a>
+          <span id="separator">|</span>
+          <a href="#" target="_blank">使用条款</a>
+          <span id="separator">|</span>
+          <a href="#" target="_blank">隐私通知</a>
+          <span id="separator">|</span>
+          <a href="#" target="_blank">Cookie声明</a>
+          <span id="separator">|</span>
+          <a href="#" target="_blank">版权信息</a>
+          <span id="separator">|</span>
+          <a href="#" target="_blank">营业执照</a>
+          <span id="separator">|</span>
+          <a href="#" target="_blank">星盟会展</a>
+          <span id="separator">|</span>
+          <a href="#" target="_blank">人力资源</a>
+          <span id="separator">|</span>
+        </p>
+        <p class="copyright">
+          <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备08115151号</a>
+          &nbsp;&nbsp;&nbsp;&nbsp;Copyright◎2022&nbsp;&nbsp;&nbsp;&nbsp;SHENZHEN AIRLINES. All Rights
+          Reserved
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/vue.js"></script>
+<script src="../../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script src="/js/axios-0.18.0.js"></script>
+
+<script>
+  let vue = new Vue({
+    el: "#app",
+    data: {
+      activeIndex: '2',
+      src: "",
+
+
+
+      classTypes: [{
+        value: '经济舱',
+        label: '经济舱'
+      }, {
+        value: '头等舱',
+        label: '头等舱'
+      }],
+      classType: ''
+    },
+    //钩子函数，VUE对象初始化完成后自动执行
+    created() {
+    },
+
+    methods: {
+      //导航栏
+      handleSelect(key) {
+        key = parseInt(key);
+        switch (key) {
+          default:
+            break;
+          case 1:
+            window.location.href = "/toUEdit";
+            break;
+          case 2:
+            window.location.href = "/";
+            break;
+          case 3:
+            window.location.href = "/toSearch";
+            break;
+          case 4:
+            window.location.href = "/toOrder";
+            break;
+          case 5:
+            window.location.replace("/logout");
+            break;
+        }
+      },
+    }
+  })
+</script>
+
+</body>
+
+</html>

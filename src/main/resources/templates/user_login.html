@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>请登录</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../css/style_login.css">
+  <link rel="stylesheet" href="../../plugins/elementui/index.css">
+  <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../css/style.css">
+
+</head>
+<body>
+<section class="ftco-section">
+  <div class="container">
+    <!--    <div class="row justify-content-center">-->
+    <!--      <div class="col-md-6 text-center mb-5">-->
+    <!--        <h4 class="heading-section">欢迎登录机票管理系统</h4>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-5">
+        <div class="wrap">
+          <div class="img" style="background-image: url('../../images/bg-2.jpg');"></div>
+          <div class="login-wrap p-4 p-md-5">
+            <div class="d-flex">
+              <div class="w-100">
+                <h3 class="mb-4">用户登录</h3>
+              </div>
+            </div>
+            <form action="login" method="post" class="signin-form">
+              <div class="form-group mt-3">
+                <input onkeyup="checkInput()" placeholder="用户手机号" id="phone" type="text" name="name" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <input onkeyup="checkInput()" placeholder="用户密码" type="password" name="password" id="password-field" class="form-control"
+                       required>
+              </div>
+              <div class="form-group mt-3">
+                <input style="display: inline; width: 140px" placeholder="请输入验证码" name="code" type="text"
+                       class="form-control" required>
+                <a href="#" onclick="refresh_auth_img()">
+                  <img id="auth-img" style="display: inline" th:src="@{/getImage}" alt="">
+                </a>
+
+              </div>
+              <div class="form-group">
+                <input disabled id="submit" type="submit" value="登录" onclick="goBack()" class="form-control btn btn-primary rounded submit px-3">
+              </div>
+              <div style="justify-content: center;" class="form-group d-md-flex">
+                <h3 class="text-center" th:text="${msg}" style="color: #d52738"></h3>
+              </div>
+            </form>
+            <p class="text-center">登录遇到问题？
+              <a href="/toRecover">找回密码</a>
+<!--              <a href="mailto:sza_ITDept@shenzhenair.com">联系IT部门</a>-->
+            </p>
+            <p class="text-center">
+              <a href="/toRegister">点我注册</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/popper.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/vue.js"></script>
+<script src="../../plugins/elementui/index.js"></script>
+<script src="../../js/axios-0.18.0.js"></script>
+<script>
+  function refresh_auth_img() {
+    let img = document.getElementById("auth-img");
+    console.log(img)
+    img.src = "/getImage?"+Math.random();
+  }
+
+  function goBack(){
+    window.history.go(-2);
+  }
+
+  function checkInput() {
+    let phone = document.getElementById("phone").value.length;
+    let pwd = document.getElementById("password-field").value.length;
+    document.getElementById("submit").disabled = !(phone === 11 && pwd !== 0);
+  }
+</script>
+</body>
+</html>
+
