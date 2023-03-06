@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <!-- 页面meta -->
+
+  <meta charset="utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>订单管理</title>
+
+  <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+  <!-- 引入样式 -->
+
+  <link rel="stylesheet" href="../../plugins/elementui/index.css">
+
+  <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="../../css/style.css">
+
+</head>
+
+<body class="hold-transition">
+
+<div id="app">
+
+  <!--  <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal"-->
+  <!--           @select="handleSelect" background-color="#fff">-->
+  <!--    <el-menu-item style="float: right" index="2"> 退出</el-menu-item>-->
+  <!--    <el-menu-item style="float: right" index="1"> 欢迎您</el-menu-item>-->
+  <!--  </el-menu>-->
+
+  <div class="app-container">
+
+    <div class="filter-container">
+      <el-input clearable placeholder="订单ID" v-model="pagination.id" style="width: 90px;"
+                class="filter-item"></el-input>
+      <el-input clearable placeholder="UUID" v-model="pagination.uuid" style="width: 90px;"
+                class="filter-item"></el-input>
+      <el-input clearable placeholder="机票号" v-model="pagination.ticketNo" style="width: 100px;"
+                class="filter-item"></el-input>
+      <el-input clearable placeholder="姓名" v-model="pagination.name" style="width: 120px;"
+                class="filter-item"></el-input>
+      <el-input clearable placeholder="身份证号" v-model="pagination.citizenId" style="width: 180px;"
+                class="filter-item"></el-input>
+      <el-input clearable placeholder="航班号" v-model="pagination.flightId" style="width: 100px;"
+                class="filter-item"></el-input>
+      <el-input clearable placeholder="舱型" v-model="pagination.classType" style="width: 80px;"
+                class="filter-item"></el-input>
+      <el-input clearable placeholder="登机口" v-model="pagination.gate" style="width: 75px;"
+                class="filter-item"></el-input>
+      <el-input clearable placeholder="是否付款" v-model="pagination.isPaid" style="width: 75px;"
+                class="filter-item"></el-input>
+      <el-button @click="getAll()" class="dalfBut">查询</el-button>
+      <el-button @click="resetQueryForm()" class="dalfBut">重置查询</el-button>
+      <el-button @click="returnFirstPage()" class="dalfBut">首页</el-button>
+      <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
+    </div>
+
+    <div class="box">
+
+      <el-table size="15 px" current-row-key="id" :data="dataList" stripe highlight-current-row>
+
+        <el-table-column type="index" align="center" label="序号"></el-table-column>
+
+        <el-table-column prop="id" label="订单ID" align="center"></el-table-column>
+
+        <el-table-column prop="uuid" label="UUID" align="center"></el-table-column>
+
+        <el-table-column prop="ticketNo" label="机票号" align="center"></el-table-column>
+
+        <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+
+        <el-table-column prop="citizenId" label="身份证号" align="center"></el-table-column>
+
+        <el-table-column prop="flightId" label="航班号" align="center"></el-table-column>
+
+        <el-table-column prop="classType" label="舱型" align="center"></el-table-column>
+
+        <el-table-column prop="fromCity" label="出发地" align="center"></el-table-column>
+
+        <el-table-column prop="toCity" label="目的地" align="center"></el-table-column>
+
+        <el-table-column prop="fromTime" label="出发时间" align="center"></el-table-column>
+
+        <el-table-column prop="toTime" label="到达时间" align="center"></el-table-column>
+
+        <el-table-column prop="seatNo" label="座位号" align="center"></el-table-column>
+
+        <el-table-column prop="gate" label="登机口" align="center"></el-table-column>
+
+        <el-table-column prop="price" label="票价" align="center"></el-table-column>
+
+        <el-table-column prop="isPaid" label="是否付款" align="center"></el-table-column>
+
+        <el-table-column prop="phone" label="手机号" align="center"></el-table-column>
+
+        <el-table-column label="操作" align="center">
+
+          <template slot-scope="scope">
+
+            <el-button type="primary" circle size="mini" @click="handleUpdate(scope.row)"
+                       icon="el-icon-edit"></el-button>
+
+            <el-button type="danger" circle size="mini" @click="handleDelete(scope.row)"
+                       icon="el-icon-delete"></el-button>
+
+          </template>
+
+        </el-table-column>
+
+      </el-table>
+
+      <!--分页组件-->
+      <div class="pagination-container">
+
+        <el-pagination
+            class="pagiantion"
+
+            background
+
+            @current-change="handleCurrentChange"
+
+            :current-page="pagination.currentPage"
+
+            :page-size="pagination.pageSize"
+
+            layout="total, prev, pager, next, jumper"
+
+            :total="pagination.total">
+
+        </el-pagination>
+
+      </div>
+
+      <!-- 新增标签弹层 -->
+
+      <div class="add-form">
+
+        <el-dialog width="1200px" title="新增订单" :visible.sync="dialogFormVisible">
+
+          <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="UUID" prop="uuid">
+
+                  <el-input clearable v-model="formData.uuid"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="姓名" prop="name">
+
+                  <el-input clearable v-model="formData.name"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="身份证号" prop="citizenId">
+
+                  <el-input clearable v-model="formData.citizenId"/>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="手机号" prop="phone">
+
+                  <el-input clearable v-model="formData.phone"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="航班号" prop="flightId">
+
+                  <el-input clearable v-model="formData.flightId"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="舱型" prop="classType">
+
+                  <el-select v-model="formData.classType" placeholder="请选择" style="width: 286.6px">
+
+                    <el-option value='经济舱' label="经济舱"></el-option>
+
+                    <el-option value="头等舱" label="头等舱"></el-option>
+
+                  </el-select>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="座位号" prop="seatNo">
+
+                  <el-input clearable v-model="formData.seatNo"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="登机口" prop="gate">
+
+                  <el-input clearable v-model="formData.gate"/>
+
+                </el-form-item>
+
+              </el-col>
+
+
+              <el-col :span="8">
+
+                <el-form-item label="票价" prop="price">
+
+                  <el-input clearable v-model="formData.price"/>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="出发地" prop="fromCity">
+
+                  <el-input clearable v-model="formData.fromCity"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="目的地" prop="toCity">
+
+                  <el-input clearable v-model="formData.toCity"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="出发时间" prop="fromTime">
+
+                  <el-date-picker v-model="formData.fromTime"
+                                  type="datetime"
+                                  value-format="yyyy-MM-dd HH:mm:ss"
+                                  placeholder="选择时间"
+                                  :picker-options="pickerOptions"
+                                  style="width: 286.6px">
+                  </el-date-picker>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="到达时间" prop="toTime">
+
+                  <el-date-picker v-model="formData.toTime"
+                                  type="datetime"
+                                  value-format="yyyy-MM-dd HH:mm:ss"
+                                  placeholder="选择时间"
+                                  :picker-options="pickerOptions"
+                                  style="width: 286.6px">
+                  </el-date-picker>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+          </el-form>
+
+          <div slot="footer" class="dialog-footer">
+
+            <el-button @click="cancel()">取消</el-button>
+
+            <el-button type="primary" @click="handleAdd()">确定</el-button>
+
+          </div>
+
+        </el-dialog>
+
+      </div>
+
+      <!-- 编辑标签弹层 -->
+
+      <div class="add-form">
+
+        <el-dialog width="1200px" title="编辑检查项" :visible.sync="dialogFormVisible4Edit">
+
+          <el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="UUID" prop="uuid">
+
+                  <el-input clearable v-model="formData.uuid"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="姓名" prop="name">
+
+                  <el-input clearable v-model="formData.name"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="身份证号" prop="citizenId">
+
+                  <el-input clearable v-model="formData.citizenId"/>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="手机号" prop="phone">
+
+                  <el-input clearable v-model="formData.phone"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="航班号" prop="flightId">
+
+                  <el-input clearable v-model="formData.flightId"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="舱型" prop="classType">
+
+                  <el-select v-model="formData.classType" placeholder="请选择" style="width: 286.6px">
+
+                    <el-option value='经济舱' label="经济舱"></el-option>
+
+                    <el-option value="头等舱" label="头等舱"></el-option>
+
+                  </el-select>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="座位号" prop="seatNo">
+
+                  <el-input clearable v-model="formData.seatNo"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="登机口" prop="gate">
+
+                  <el-input clearable v-model="formData.gate"/>
+
+                </el-form-item>
+
+              </el-col>
+
+
+              <el-col :span="8">
+
+                <el-form-item label="票价" prop="price">
+
+                  <el-input clearable v-model="formData.price"/>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="出发地" prop="fromCity">
+
+                  <el-input clearable v-model="formData.fromCity"/>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="目的地" prop="toCity">
+
+                  <el-input clearable v-model="formData.toCity"/>
+
+                </el-form-item>
+
+              </el-col>
+
+
+              <el-col :span="8">
+
+                <el-form-item label="出发时间" prop="fromTime">
+
+                  <el-date-picker v-model="formData.fromTime"
+                                  type="datetime"
+                                  value-format="yyyy-MM-dd HH:mm:ss"
+                                  placeholder="选择时间"
+                                  :picker-options="pickerOptions"
+                                  style="width: 286.6px">
+                  </el-date-picker>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+            <el-row>
+
+              <el-col :span="8">
+
+                <el-form-item label="到达时间" prop="toTime">
+
+                  <el-date-picker v-model="formData.toTime"
+                                  type="datetime"
+                                  value-format="yyyy-MM-dd HH:mm:ss"
+                                  placeholder="选择时间"
+                                  :picker-options="pickerOptions"
+                                  style="width: 286.6px">
+                  </el-date-picker>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="是否付款" prop="isPaid">
+
+                  <el-select v-model="formData.isPaid" placeholder="请选择" style="width: 286.6px">
+
+                    <el-option value='是' label="是"></el-option>
+
+                    <el-option value="否" label="否"></el-option>
+
+                  </el-select>
+
+                </el-form-item>
+
+              </el-col>
+
+              <el-col :span="8">
+
+                <el-form-item label="机票号" prop="ticketNo">
+
+                  <el-input :disabled="true" clearable v-model="formData.ticketNo"/>
+
+                </el-form-item>
+
+              </el-col>
+
+            </el-row>
+
+          </el-form>
+
+          <div slot="footer" class="dialog-footer">
+
+            <el-button @click="cancel()">取消</el-button>
+
+            <el-button type="primary" @click="handleEdit()">确定</el-button>
+
+          </div>
+
+        </el-dialog>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+
+<!-- 引入组件库 -->
+
+<script src="../../js/vue.js"></script>
+
+<script src="../../plugins/elementui/index.js"></script>
+
+<script type="text/javascript" src="../../js/jquery.min.js"></script>
+
+<script src="../../js/axios-0.18.0.js"></script>
+
+<script>
+  let vue = new Vue({
+    el: '#app',
+    data: {
+      dataList: [],//当前页要展示的列表数据
+      dialogFormVisible: false,//添加表单是否可见
+      dialogFormVisible4Edit: false,//编辑表单是否可见
+      formData: {},//表单数据
+      rules: {//校验规则
+        citizenId: [{required: true, message: '该项为必填项', trigger: 'blur'}],
+        name: [{required: true, message: '该项为必填项', trigger: 'blur'}],
+        flightId: [{required: true, message: '该项为必填项', trigger: 'blur'}],
+        classType: [{required: true, message: '该项为必填项', trigger: 'blur'}],
+        phone: [{required: true, message: '该项为必填项', trigger: 'blur'}],
+      },
+      pagination: {//分页相关模型数据
+        currentPage: 1,//当前页码
+        pageSize: 12,//每页显示的记录数
+        total: 0,//总记录数
+        //条件查询
+        id: "", //订单id
+        uuid: "", //订单id
+        ticketNo: "", //机票号
+        name: "", //姓名
+        citizenId: "", //身份证号
+        flightId: "", //航班号
+        classType: "", //舱型
+        fromCity: "",
+        toCity: "",
+        fromTime: "",
+        toTime: "",
+        gate: "",//登机口
+        isPaid: "",
+        phone: ""
+      }
+    },
+
+    // datepicker
+    pickerOptions: {
+      disabledDate(time) {
+        return time.getTime() + 1000 * 60 * 60 * 24 < Date.now();
+      },
+    },
+
+    //钩子函数，VUE对象初始化完成后自动执行
+    created() {
+      this.getAll();
+    },
+
+    methods: {
+      // //列表
+      // getAll() {
+      //   axios.get("/users").then((res) => {
+      //     this.dataList = res.data.data;
+      //   });
+      // },
+
+      //分页查询 //列表
+      getAll() {
+        qurl = "?id=" + this.pagination.id;
+        qurl += "&uuid=" + this.pagination.uuid;
+        qurl += "&ticketNo=" + this.pagination.ticketNo;
+        qurl += "&name=" + this.pagination.name;
+        qurl += "&citizenId=" + this.pagination.citizenId;
+        qurl += "&flightId=" + this.pagination.flightId;
+        qurl += "&classType=" + this.pagination.classType;
+        qurl += "&gate=" + this.pagination.gate;
+        qurl += "&isPaid=" + this.pagination.isPaid;
+        qurl += "&phone=" + this.pagination.phone;
+
+        axios.get("/orders/" + this.pagination.currentPage + "/" + this.pagination.pageSize + qurl).then((res) => {
+          this.pagination.currentPage = res.data.data.current;
+          this.pagination.pageSize = res.data.data.size;
+          this.pagination.total = res.data.data.total;
+          this.dataList = res.data.data.records;
+          console.log(this.dataList)
+        });
+      },
+
+      //切换页码
+      handleCurrentChange(currentPage) {
+        //Change the current page number to selected number
+        this.pagination.currentPage = currentPage;
+        console.log(currentPage);
+        this.getAll();
+      },
+
+      //弹出添加窗口
+      handleCreate() {
+        this.dialogFormVisible = true;
+        this.resetForm();
+      },
+
+      //重置表单
+      resetForm() {
+        this.formData = {};
+      },
+
+      //重置查询表单
+      resetQueryForm() {
+        this.pagination.id = "";
+        this.pagination.uuid = "";
+        this.pagination.ticketNo = "";
+        this.pagination.name = "";
+        this.pagination.citizenId = "";
+        this.pagination.flightId = "";
+        this.pagination.classType = "";
+        this.pagination.gate = "";
+        this.pagination.isPaid = "";
+        this.pagination.phone = "";
+        // full reset including return to the first page;
+        // this.pagination.currentPage = 1;
+        this.getAll();
+      },
+
+      //返回首页
+      returnFirstPage() {
+        this.pagination.currentPage = 1;
+        axios.get("/orders/" + this.pagination.currentPage + "/" + this.pagination.pageSize).then((res) => {
+          this.pagination.currentPage = res.data.data.current;
+          this.pagination.pageSize = res.data.data.size;
+          this.pagination.total = res.data.data.total;
+          this.dataList = res.data.data.records;
+        });
+      },
+
+      //添加
+      handleAdd() {
+        console.log(this.formData)
+        axios.post("/orders", this.formData).then((res) => {
+          if (res.data.flag) {
+            this.dialogFormVisible = false;
+            this.$message.success(res.data.msg);
+          } else {
+            // this.$message.error("添加失败");
+            this.$message.error(res.data.msg);
+          }
+        }).finally(() => {
+          this.getAll();
+        });
+      },
+
+      //取消
+      cancel() {
+        this.dialogFormVisible = false;
+        this.dialogFormVisible4Edit = false;
+        this.$message.info("当前操作取消");
+      },
+      // 删除
+      handleDelete(row) {
+        this.$confirm("此操作永久删除该数据，是否继续？", "提示", {type: "info"}).then(() => {
+          axios.delete("/orders/" + row.id).then((res) => {
+            if (res.data.flag) {
+              this.$message.success("删除成功");
+              users.html
+            } else {
+              this.$message.error("数据同步失败，自动刷新")
+            }
+          }).finally(() => {
+            this.getAll();
+          });
+        }).catch(() => {
+          this.$message.info("操作取消");
+        });
+      },
+
+      //弹出编辑窗口
+      handleUpdate(row) {
+        console.log(row);
+        axios.get("/orders/" + row.id).then((res) => {
+          if (res.data.flag && res.data.data != null) {
+            this.dialogFormVisible4Edit = true;
+            this.formData = res.data.data;
+          } else {
+            this.$message.error("数据同步失败，自动刷新")
+          }
+        }).finally(() => {
+          this.getAll();
+        });
+      },
+
+      //修改
+      handleEdit() {
+        axios.put("/orders", this.formData).then((res) => {
+          if (res.data.flag) {
+            this.dialogFormVisible4Edit = false;
+            this.$message.success("修改成功");
+          } else {
+            this.$message.error("修改失败");
+          }
+        }).finally(() => {
+          this.getAll();
+        });
+      },
+
+      //导航栏
+      handleSelect(key) {
+        let k = parseInt(key);
+        console.log(k);
+        switch (k) {
+          default:
+            break;
+          case 1:
+            break;
+          case 2:
+            break;
+        }
+      }
+
+    }
+  });
+
+</script>
+
+</html>

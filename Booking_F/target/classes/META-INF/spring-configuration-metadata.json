@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "spring.cache.redis",
+      "type": "com.sheldon.config.RedisConfig",
+      "sourceType": "com.sheldon.config.RedisConfig"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

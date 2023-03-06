@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Register</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../css/style_login.css">
+  <link rel="stylesheet" href="../../plugins/elementui/index.css">
+  <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../css/style.css">
+
+</head>
+<body>
+<div id="app">
+  <section class="ftco-section">
+    <div class="container">
+      <!--    <div class="row justify-content-center">-->
+      <!--      <div class="col-md-6 text-center mb-5">-->
+      <!--        <h2 class="heading-section">欢迎登录机票管理系统</h2>-->
+      <!--      </div>-->
+      <!--    </div>-->
+      <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+          <div class="wrap">
+            <div class="img" style="background-image: url('../../images/bg-2.jpg');"></div>
+            <div class="login-wrap p-4 p-md-5">
+              <div class="d-flex">
+                <div class="w-100">
+                  <h3 class="mb-4">用户注册</h3>
+                </div>
+              </div>
+              <form id="registerForm" action="register" method="post" class="signin-form">
+                <div class="form-group mt-3">
+                  <input placeholder="用户姓名" type="text" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <input placeholder="用户密码" type="password" name="password" id="password-field" class="form-control"
+                         required>
+                </div>
+                <div class="form-group">
+                  <input onkeyup="checkInput()" placeholder="18位身份证号" id="cid" type="text" name="citizenId"
+                         class="form-control"
+                         required>
+                </div>
+                <div class="form-group">
+                  <input onkeyup="checkInput()" placeholder="年龄" id="age" type="text" name="age" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <input placeholder="用户昵称" type="text" name="nickname" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <input onkeyup="checkInput()" placeholder="11位手机号" id="phone" type="text" name="phone"
+                         class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label style="display: inline">
+                    <select type="text" name="gender" class="form-control" required>
+                      <option value="未知" disabled>选择性别</option>
+                      <option value="男">男</option>
+                      <option value="女">女</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="form-group mt-3">
+                  <input style="display: inline; width: 140px" placeholder="请输入验证码" name="code" type="text"
+                         class="form-control" required>
+                  <a href="#" onclick="refresh_auth_img()">
+                    <img id="auth-img" style="display: inline" th:src="@{/getImage}" alt="">
+                  </a>
+                </div>
+                <div class="form-group">
+                  <input disabled id="submit" type="submit" value="注册"
+                         class="form-control btn btn-primary rounded submit px-3">
+                </div>
+                <div style="justify-content: center;" class="form-group d-md-flex">
+                  <h3 class="text-center" th:text="${msg}" style="color: #d52738"></h3>
+                </div>
+              </form>
+              <p class="text-center">注册遇到问题？
+                <!--              <a href="/toRecover">找回密码</a>-->
+                <a href="mailto:sza_ITDept@shenzhenair.com">联系IT部门</a>
+              </p>
+              <p class="text-center">
+                <a href="/toLogin">点我登录</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/popper.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/vue.js"></script>
+<script src="../../plugins/elementui/index.js"></script>
+<script src="../../js/axios-0.18.0.js"></script>
+<script>
+  function refresh_auth_img() {
+    let img = document.getElementById("auth-img");
+    img.src = "/getImage?" + Math.random();
+  }
+
+  function checkInput() {
+    let cid = document.getElementById("cid").value.length;
+    let phone = document.getElementById("phone").value.length;
+    let age = parseInt(document.getElementById("age").value);
+    document.getElementById("submit").disabled = !(cid === 18 && phone === 11 && age >= 0 && age <= 130);
+  }
+
+</script>
+
+</body>
+</html>
+
